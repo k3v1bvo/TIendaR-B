@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 245, 245, 247;
+  --background-start-rgb: 10, 10, 12;
+  --background-end-rgb: 19, 19, 22;
+}
+
+@layer base {
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+        to bottom,
+        rgb(var(--background-start-rgb)),
+        rgb(var(--background-end-rgb))
+      )
+      fixed;
+    background-color: #0A0A0C;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    @apply antialiased selection:bg-neon-amber selection:text-black;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0C;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2A32;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #F59E0B;
+}
+
+/* Glassmorphism utilities */
+.glass-panel {
+  background: rgba(19, 19, 22, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-neon {
+  background: rgba(19, 19, 22, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.1);
+}
+
+/* Custom Glow animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.03);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s infinite ease-in-out;
+}
+
+/* ==========================================================================
+   THEME SWITCHER OVERRIDES: MODO CLARO / EDITORIAL FASHION & SCRAPBOOK
+   Inspirado en Dribbble Fashion eCommerce & @bonita.la.vida_
+   ========================================================================== */
+html[data-theme='editorial-light'] body,
+html.theme-light body {
+  background: #FAF8F5 !important;
+  background-color: #FAF8F5 !important;
+  color: #111111 !important;
+}
+
+/* Paneles, Tarjetas y Vidrios en modo Claro / Editorial */
+html[data-theme='editorial-light'] .glass-panel,
+html[data-theme='editorial-light'] .glass-panel-neon,
+html[data-theme='editorial-light'] [class*="bg-dark-"],
+html[data-theme='editorial-light'] [class*="bg-zinc-900"],
+html[data-theme='editorial-light'] [class*="bg-zinc-800"] {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+  color: #111111 !important;
+}
+
+/* Textos claros convertidos a alta legibilidad y contraste editorial */
+html[data-theme='editorial-light'] [class*="text-zinc-100"],
+html[data-theme='editorial-light'] [class*="text-zinc-200"],
+html[data-theme='editorial-light'] [class*="text-zinc-300"],
+html[data-theme='editorial-light'] [class*="text-white"] {
+  color: #111111 !important;
+}
+
+html[data-theme='editorial-light'] [class*="text-zinc-400"],
+html[data-theme='editorial-light'] [class*="text-zinc-500"] {
+  color: #555555 !important;
+}
+
+/* Bordes en Modo Editorial */
+html[data-theme='editorial-light'] [class*="border-white/"],
+html[data-theme='editorial-light'] [class*="border-zinc-"] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Acentos Neón convertidos a Cereza Artístico / Negro de Alta Costura */
+html[data-theme='editorial-light'] .text-neon-amber {
+  color: #D94F70 !important; /* Cereza sentimental de @bonita.la.vida_ */
+}
+
+html[data-theme='editorial-light'] .border-neon-amber {
+  border-color: #D94F70 !important;
+}
+
+html[data-theme='editorial-light'] .bg-neon-amber {
+  background-color: #111111 !important;
+  color: #FFFFFF !important;
+}
+
+/* Scrollbar para Modo Editorial */
+html[data-theme='editorial-light'] ::-webkit-scrollbar-track {
+  background: #FAF8F5;
+}
+html[data-theme='editorial-light'] ::-webkit-scrollbar-thumb {
+  background: #CCCCCC;
+}
+html[data-theme='editorial-light'] ::-webkit-scrollbar-thumb:hover {
+  background: #D94F70;
+}
+
+/* Inputs, Badges y Botones interactivos en Modo Editorial */
+html[data-theme='editorial-light'] input,
+html[data-theme='editorial-light'] select,
+html[data-theme='editorial-light'] textarea {
+  background-color: #FFFFFF !important;
+  color: #111111 !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+html[data-theme='editorial-light'] input::placeholder,
+html[data-theme='editorial-light'] textarea::placeholder {
+  color: #888888 !important;
+}
+
+/* Sombras y bordes en Hover en modo editorial */
+html[data-theme='editorial-light'] .hover\:border-white\/30:hover,
+html[data-theme='editorial-light'] .hover\:border-white\/20:hover {
+  border-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-theme='editorial-light'] .hover\:text-white:hover {
+  color: #000000 !important;
+}
