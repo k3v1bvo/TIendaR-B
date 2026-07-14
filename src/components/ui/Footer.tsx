@@ -24,10 +24,10 @@ export function Footer() {
             </div>
             <div>
               <span className="font-black text-lg tracking-wider uppercase text-white group-hover:text-neon-amber transition-colors">
-                Bonita<span className="text-neon-amber">LaVida</span>
+                Upcycling<span className="text-neon-amber">Lab</span>
               </span>
               <span className="block text-[9px] font-extrabold text-zinc-400 uppercase tracking-[0.2em]">
-                Upcycling & Custom Lab
+                Custom Shop & Studio
               </span>
             </div>
           </Link>
@@ -49,23 +49,19 @@ export function Footer() {
           <ul className="space-y-3 text-xs font-medium text-zinc-300">
             <li>
               <a
-                href="https://www.instagram.com/bonita.la.vida_/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#comunidad"
                 className="hover:text-neon-amber transition-colors flex items-center gap-2 group"
               >
                 <div className="w-6 h-6 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition-colors">
                   <InstagramIcon className="w-3.5 h-3.5" />
                 </div>
-                <span>Instagram @bonita.la.vida_</span>
+                <span>Instagram (Próximamente)</span>
                 <ExternalLink className="w-3 h-3 text-zinc-500 group-hover:text-white ml-auto" />
               </a>
             </li>
             <li>
               <a
-                href="https://www.instagram.com/bonita.la.vida_/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#comunidad"
                 className="hover:text-neon-amber transition-colors flex items-center gap-2 group"
               >
                 <div className="w-6 h-6 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
@@ -132,7 +128,7 @@ export function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
-        <p>&copy; {new Date().getFullYear()} Bonita La Vida (@bonita.la.vida_) — Upcycling Lab & Custom Shop. Todos los derechos reservados.</p>
+        <p>&copy; {new Date().getFullYear()} Upcycling Lab & Custom Shop S.R.L. — Todos los derechos reservados.</p>
         <div className="flex items-center gap-1.5 text-zinc-400 font-medium text-[11px]">
           <span>Confeccionado artesanalmente con</span>
           <Heart className="w-3.5 h-3.5 text-neon-pink fill-neon-pink animate-pulse" />
