@@ -9,7 +9,17 @@ import { CustomLabConfigurator, PrendaBaseItem, ModificadorItem } from '@/compon
 import { AcidRubberCatalog, BilleteraItem } from '@/components/shop/AcidRubberCatalog'
 import { CartDrawer, CartItem } from '@/components/shop/CartDrawer'
 import { QRCheckoutModal } from '@/components/checkout/QRCheckoutModal'
-import { Sparkles, ShieldCheck, ArrowRight, Zap, Recycle, Shield, Heart, Eye, Star, CheckCircle2 } from 'lucide-react'
+import { Sparkles, ShieldCheck, ArrowRight, Zap, Recycle, Shield, Heart, Eye, Star, CheckCircle2, MessageCircle, ExternalLink, Scissors, Layers, MapPin } from 'lucide-react'
+
+function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  )
+}
 
 // Mock de seed para que la app sea inmediatamente interactiva al abrir en localhost
 const MOCK_PRENDAS_STOCK: PrendaBaseItem[] = [
@@ -63,7 +73,7 @@ const MOCK_BILLETERAS: BilleteraItem[] = [
     id: 'b2',
     nombre_diseno: 'Toxic Green Inner Tube Cardholder',
     lote: 'LOTE-01-2026',
-    precio_fijo: 3,
+    precio_fijo: 25.0,
     stock_disponible: 3,
     imagen_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
   },
@@ -151,7 +161,7 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col justify-between transition-colors duration-300">
       <Navbar cartCount={cart.reduce((a, b) => a + b.cantidad, 0)} onOpenCart={() => setIsCartOpen(true)} />
 
-      <main className="flex-1 space-y-20 md:space-y-32">
+      <main className="flex-1 space-y-24 md:space-y-36">
         {/* =========================================================================
             HERO SECTION: FASHION eCOMMERCE EDITORIAL LANDING (ESTILO DRIBBBLE & BONITA)
             ========================================================================= */}
@@ -172,7 +182,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-zinc-600 dark:text-zinc-400 text-base md:text-xl font-normal leading-relaxed max-w-xl">
-                Collages llenos de sentimientos e intervención de piezas únicas. Transformamos prendas denim vintage y fabricamos accesorios indestructibles en <strong className="text-zinc-900 dark:text-white underline decoration-neon-amber decoration-2">caucho 100% reciclado</strong> de cámaras de bicicleta.
+                Collages llenos de sentimientos e intervención de piezas únicas en Bolivia 📍🇧🇴. Transformamos mezclilla vintage de los 90s y fabricamos accesorios de resistencia eterna en <strong className="text-zinc-900 dark:text-white underline decoration-neon-amber decoration-2">caucho 100% reciclado</strong> de cámaras de bicicleta.
               </p>
 
               {/* Botones de acción editorial */}
@@ -184,26 +194,23 @@ export default function HomePage() {
                   }}
                   className="group px-8 py-4 rounded-full bg-zinc-900 dark:bg-neon-amber text-white dark:text-black font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-xl hover:scale-105 transition-all active:scale-95"
                 >
-                  <span>Entrar al Custom Lab</span>
+                  <span>Explorar Catálogo & Lab</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 
-                <button
-                  onClick={() => {
-                    setActiveTab('rubber')
-                    document.getElementById('catalogo-main')?.scrollIntoView({ behavior: 'smooth' })
-                  }}
+                <a
+                  href="#historia"
                   className="px-8 py-4 rounded-full bg-white dark:bg-dark-obsidian hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-300 dark:border-white/15 font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-md active:scale-95"
                 >
-                  <span>Ver Billeteras Acid Rubber</span>
-                </button>
+                  <span>📖 Conocer Nuestra Historia</span>
+                </a>
               </div>
 
               {/* Métricas / Trust badges estilo Editorial */}
               <div className="pt-6 grid grid-cols-3 gap-6 border-t border-zinc-200 dark:border-white/10 max-w-lg text-left">
                 <div>
                   <span className="block text-2xl md:text-3xl font-black text-zinc-900 dark:text-white">100%</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Caucho Upcycled</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Upcycled Rubber</span>
                 </div>
                 <div>
                   <span className="block text-2xl md:text-3xl font-black text-zinc-900 dark:text-white">1 of 1</span>
@@ -211,12 +218,12 @@ export default function HomePage() {
                 </div>
                 <div>
                   <span className="block text-2xl md:text-3xl font-black text-zinc-900 dark:text-white">📍 🇧🇴</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Taller Artesanal</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Diseño en Bolivia</span>
                 </div>
               </div>
             </div>
 
-            {/* Columna Derecha: Collage / Lookbook Image Showcase (Estilo Polaroid Scrapbook & Dribbble) */}
+            {/* Columna Derecha: Collage / Lookbook Image Showcase */}
             <div className="lg:col-span-5 relative flex justify-center items-center">
               <div className="relative w-full max-w-md aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-zinc-800 bg-zinc-100 dark:bg-black group">
                 <img
@@ -225,13 +232,11 @@ export default function HomePage() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
 
-                {/* Badge Flotante Superior */}
                 <div className="absolute top-4 left-4 bg-white/90 dark:bg-dark-obsidian/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-black/10 dark:border-white/15 shadow-lg flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-wider text-zinc-900 dark:text-white">
                   <span className="w-2 h-2 rounded-full bg-neon-green animate-ping" />
-                  <span>Piezas Únicas en Stock</span>
+                  <span>Piezas Únicas Disponibles</span>
                 </div>
 
-                {/* Tarjeta Flotante Scrapbook / Polaroid inferior */}
                 <div className="absolute bottom-4 left-4 right-4 bg-white/95 dark:bg-dark-obsidian/95 backdrop-blur-md p-4 rounded-2xl border border-black/10 dark:border-white/15 shadow-2xl">
                   <div className="flex items-center justify-between">
                     <div>
@@ -240,13 +245,12 @@ export default function HomePage() {
                     </div>
                     <div className="text-right">
                       <span className="text-base font-black text-zinc-900 dark:text-neon-amber">$65.00</span>
-                      <span className="block text-[9px] font-bold text-green-600 dark:text-green-400">Disponible</span>
+                      <span className="block text-[9px] font-bold text-green-600 dark:text-green-400">En Stock</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Elemento secundario superpuesto estilo Collage / Scrapbook */}
               <div className="hidden sm:block absolute -bottom-6 -right-6 w-44 aspect-square rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-zinc-800 rotate-6 hover:rotate-0 transition-transform bg-zinc-900">
                 <img
                   src="https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=500&q=80"
@@ -262,44 +266,172 @@ export default function HomePage() {
         </section>
 
         {/* =========================================================================
-            EDITORIAL HIGHLIGHTS & MANIFIESTO (FASHION STRIP)
+            SECCIÓN 1: QUIÉNES SOMOS & MANIFIESTO ("COLLAGES LLENOS DE SENTIMIENTOS")
             ========================================================================= */}
-        <section className="max-w-7xl mx-auto px-4 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-8 rounded-3xl bg-white dark:bg-dark-card border border-zinc-200 dark:border-white/10 shadow-sm space-y-4 hover:shadow-xl transition-shadow">
-            <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-neon-purple/20 text-zinc-900 dark:text-neon-purple flex items-center justify-center font-black">
-              <Sparkles className="w-6 h-6" />
+        <section id="historia" className="max-w-7xl mx-auto px-4 md:px-12 pt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-white dark:bg-dark-card p-8 md:p-14 rounded-3xl border border-zinc-200 dark:border-white/10 shadow-lg">
+            <div className="lg:col-span-6 space-y-6">
+              <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-neon-amber">
+                <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+                <span>Quiénes Somos • Manifiesto Artesanal</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-zinc-900 dark:text-white leading-tight">
+                Collages Llenos de <br />
+                <span className="font-serif italic font-light text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-pink-500 dark:from-neon-amber dark:to-neon-pink">
+                  Sentimientos.
+                </span>
+              </h2>
+
+              <div className="space-y-4 text-zinc-600 dark:text-zinc-300 text-sm md:text-base leading-relaxed font-normal">
+                <p>
+                  En <strong>Upcycling Lab & Custom Shop</strong> creemos que la ropa y los objetos que llevamos a diario deben tener un alma, una historia y una rebeldía propia. No somos una fábrica de moda rápida ni producimos plástico nuevo.
+                </p>
+                <p>
+                  Rescatamos chamarras de mezclilla de los años 90 y 2000 que el mundo olvidó, y recolectamos cámaras de neumático de bicicleta destinadas a contaminar los basureros. Las limpiamos con procesos orgánicos, las restauramos y las intervenimos manualmente.
+                </p>
+                <p className="border-l-4 border-zinc-900 dark:border-neon-amber pl-4 italic font-medium text-zinc-900 dark:text-white">
+                  "Cada parche cosido, cada trazo de pintura neón reactiva al UV y cada textura de caucho es un collage emocional irrepetible. Confeccionamos piezas para toda la vida desde nuestro taller en Bolivia 📍🇧🇴."
+                </p>
+              </div>
+
+              <div className="pt-2 flex items-center gap-6">
+                <a
+                  href="#comunidad"
+                  className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white font-black text-xs uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
+                >
+                  <InstagramIcon className="w-4 h-4" />
+                  <span>Seguir nuestras Redes Sociales (Pronto)</span>
+                </a>
+              </div>
             </div>
-            <h3 className="font-black text-lg text-zinc-900 dark:text-white uppercase tracking-tight">Intervención de Autor</h3>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
-              Cada prenda del taller es tratada como un lienzo o collage sentimental. Elige entre bordados cyber, pintura acrílica UV reactiva y parches exclusivos.
+
+            <div className="lg:col-span-6 grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-md border border-black/10 dark:border-white/10">
+                  <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80" alt="Taller Upcycling 1" className="w-full h-full object-cover" />
+                </div>
+                <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-black/50 border border-black/5 text-center">
+                  <span className="block text-xs font-black uppercase text-zinc-900 dark:text-white">Mezclilla Vintage</span>
+                  <span className="text-[10px] text-zinc-500">Rescate 1 of 1</span>
+                </div>
+              </div>
+              <div className="space-y-4 pt-8">
+                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-md border border-black/10 dark:border-white/10">
+                  <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=600&q=80" alt="Taller Upcycling 2" className="w-full h-full object-cover" />
+                </div>
+                <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-black/50 border border-black/5 text-center">
+                  <span className="block text-xs font-black uppercase text-zinc-900 dark:text-white">Acid Rubber</span>
+                  <span className="text-[10px] text-zinc-500">Caucho Indestructible</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================================
+            SECCIÓN 2: CÓMO TRABAJAMOS & PROCESO EN 4 PASOS
+            ========================================================================= */}
+        <section id="proceso" className="max-w-7xl mx-auto px-4 md:px-12 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-neon-amber">El Proceso de Creación</span>
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-zinc-900 dark:text-white">
+              De Desecho a Obra de Arte
+            </h2>
+            <p className="text-zinc-600 dark:text-zinc-400 text-sm md:text-base font-normal">
+              Así transformamos cada prenda vintage o cámara de bicicleta en nuestro laboratorio digital y físico.
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-white dark:bg-dark-card border border-zinc-200 dark:border-white/10 shadow-sm space-y-4 hover:shadow-xl transition-shadow">
-            <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-neon-green/20 text-zinc-900 dark:text-neon-green flex items-center justify-center font-black">
-              <Recycle className="w-6 h-6" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="p-8 rounded-3xl bg-white dark:bg-dark-card border border-zinc-200 dark:border-white/10 shadow-sm space-y-4 relative overflow-hidden group hover:border-zinc-400 dark:hover:border-white/30 transition-all">
+              <span className="absolute -right-3 -top-3 text-7xl font-black text-zinc-100 dark:text-white/5 pointer-events-none group-hover:text-zinc-200 transition-colors">01</span>
+              <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-neon-purple/20 text-zinc-900 dark:text-neon-purple flex items-center justify-center font-black">
+                <Scissors className="w-6 h-6" />
+              </div>
+              <h3 className="font-black text-base text-zinc-900 dark:text-white uppercase tracking-tight">Rescate & Limpieza</h3>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
+                Selección manual de chamarras oversize y triple lavado cítrico antibacterial de cámaras de caucho para asegurar máxima higiene y textura suave.
+              </p>
             </div>
-            <h3 className="font-black text-lg text-zinc-900 dark:text-white uppercase tracking-tight">Caucho Indestructible</h3>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
-              Rescatamos cámaras de neumático de bicicleta. Limpieza cítrica profunda y confección artesanal para crear billeteras impermeables de durabilidad infinita.
-            </p>
-          </div>
 
-          <div className="p-8 rounded-3xl bg-white dark:bg-dark-card border border-zinc-200 dark:border-white/10 shadow-sm space-y-4 hover:shadow-xl transition-shadow">
-            <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-neon-amber/20 text-zinc-900 dark:text-neon-amber flex items-center justify-center font-black">
-              <ShieldCheck className="w-6 h-6" />
+            <div className="p-8 rounded-3xl bg-white dark:bg-dark-card border border-zinc-200 dark:border-white/10 shadow-sm space-y-4 relative overflow-hidden group hover:border-zinc-400 dark:hover:border-white/30 transition-all">
+              <span className="absolute -right-3 -top-3 text-7xl font-black text-zinc-100 dark:text-white/5 pointer-events-none group-hover:text-zinc-200 transition-colors">02</span>
+              <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-neon-amber/20 text-zinc-900 dark:text-neon-amber flex items-center justify-center font-black">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <h3 className="font-black text-base text-zinc-900 dark:text-white uppercase tracking-tight">Intervención & Collage</h3>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
+                Aplicamos bordados dorsales, parches de autor y pintura neón UV reactiva. Puedes elegir tu combinación aquí mismo en nuestro configurador digital.
+              </p>
             </div>
-            <h3 className="font-black text-lg text-zinc-900 dark:text-white uppercase tracking-tight">Checkout QR Directo</h3>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
-              Paga en segundos con código QR interbancario o transferencia. Subes tu comprobante desde el celular y nuestro equipo lo valida en tiempo real.
-            </p>
+
+            <div className="p-8 rounded-3xl bg-white dark:bg-dark-card border border-zinc-200 dark:border-white/10 shadow-sm space-y-4 relative overflow-hidden group hover:border-zinc-400 dark:hover:border-white/30 transition-all">
+              <span className="absolute -right-3 -top-3 text-7xl font-black text-zinc-100 dark:text-white/5 pointer-events-none group-hover:text-zinc-200 transition-colors">03</span>
+              <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-neon-green/20 text-zinc-900 dark:text-neon-green flex items-center justify-center font-black">
+                <Layers className="w-6 h-6" />
+              </div>
+              <h3 className="font-black text-base text-zinc-900 dark:text-white uppercase tracking-tight">Confección Indestructible</h3>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
+                Costuras de hilo nylon de grado industrial y herrajes metálicos. Nuestras billeteras de caucho son 100% impermeables y no se desgastan jamás.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-3xl bg-white dark:bg-dark-card border border-zinc-200 dark:border-white/10 shadow-sm space-y-4 relative overflow-hidden group hover:border-zinc-400 dark:hover:border-white/30 transition-all">
+              <span className="absolute -right-3 -top-3 text-7xl font-black text-zinc-100 dark:text-white/5 pointer-events-none group-hover:text-zinc-200 transition-colors">04</span>
+              <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-neon-pink/20 text-zinc-900 dark:text-neon-pink flex items-center justify-center font-black">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="font-black text-base text-zinc-900 dark:text-white uppercase tracking-tight">Pago QR & Envío</h3>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
+                Sin comisiones de tarjetas. Pagas con tu aplicación bancaria (QR directa), subes la captura y te enviamos tu pieza con código de seguimiento en vivo.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================================
+            SECCIÓN 3: COMUNIDAD & COLLABS POR DM (UPCYCLING LAB)
+            ========================================================================= */}
+        <section id="comunidad" className="max-w-7xl mx-auto px-4 md:px-12">
+          <div className="p-8 md:p-14 rounded-3xl bg-gradient-to-r from-zinc-900 via-black to-zinc-900 text-white shadow-2xl border border-white/15 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-8 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 text-xs font-black uppercase tracking-wider">
+                <InstagramIcon className="w-3.5 h-3.5" />
+                <span>Comunidad & Scrapbook Studio</span>
+              </div>
+              <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight">
+                ¿Tienes un Proyecto Especial o Quieres Colaborar?
+              </h3>
+              <p className="text-zinc-400 text-sm md:text-base max-w-2xl font-normal leading-relaxed">
+                Si eres artista, músico, tienes un diseño loco en mente, o simplemente quieres enviarnos tu propia chamarra para que le hagamos un collage a mano en nuestro taller, escríbenos por mensaje directo (DM).
+              </p>
+            </div>
+
+            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
+              <a
+                href="#comunidad"
+                className="w-full py-4 px-6 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl hover:bg-zinc-200 transition-all text-center active:scale-95"
+              >
+                <InstagramIcon className="w-4 h-4 text-pink-600" />
+                <span>Instagram del Taller (Próximamente)</span>
+              </a>
+
+              <a
+                href="#comunidad"
+                className="w-full py-4 px-6 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 border border-white/10 transition-all text-center active:scale-95"
+              >
+                <MessageCircle className="w-4 h-4 text-green-400" />
+                <span>Pedir Collab / DM Directo</span>
+              </a>
+            </div>
           </div>
         </section>
 
         {/* =========================================================================
             SECCIÓN PRINCIPAL: TABS EDITORIALES & CONFIGURADOR / CATÁLOGO
             ========================================================================= */}
-        <section id="catalogo-main" className="max-w-7xl mx-auto px-4 md:px-12 space-y-12">
+        <section id="catalogo-main" className="max-w-7xl mx-auto px-4 md:px-12 space-y-12 pt-6">
           {/* Cabecera & Tabs Editorial */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 dark:border-white/10 pb-8">
             <div>
