@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Navbar } from '@/components/ui/Navbar'
 import { Footer } from '@/components/ui/Footer'
 import { CustomLabConfigurator, PrendaBaseItem, ModificadorItem } from '@/components/shop/CustomLabConfigurator'
 import { CartDrawer, CartItem } from '@/components/shop/CartDrawer'
 import { QRCheckoutModal } from '@/components/checkout/QRCheckoutModal'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 const MOCK_PRENDAS_STOCK: PrendaBaseItem[] = [
   {
@@ -52,6 +53,50 @@ export default function LaboratorioPage() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
+  const [prendasStock, setPrendasStock] = useState<PrendaBaseItem[]>(MOCK_PRENDAS_STOCK)
+  const [modificadores, setModificadores] = useState<ModificadorItem[]>(MOCK_MODIFICADORES)
+
+  useEffect(() => {
+    async function loadRealData() {
+      try {
+        const supabase = createClient()
+        const [resRopa, resMods] = await Promise.all([
+          supabase.from('productos_base').select('*').eq('is_active', true),
+          supabase.from('modificadores').select('*').eq('is_active', true),
+        ])
+
+        if (resRopa.data && resRopa.data.length > 0) {
+          setPrendasStock(
+            resRopa.data.map((item: any) => ({
+              id: item.id,
+              nombre: item.nombre,
+              tipo: item.tipo,
+              talla: item.talla,
+              precio_base: Number(item.precio_base),
+              stock: item.stock,
+              imagen_url: item.imagen_url,
+              galeria_urls: item.galeria_urls,
+            }))
+          )
+        }
+        if (resMods.data && resMods.data.length > 0) {
+          setModificadores(
+            resMods.data.map((item: any) => ({
+              id: item.id,
+              nombre: item.nombre,
+              categoria: item.categoria,
+              precio_extra: Number(item.precio_extra),
+              imagen_referencia: item.imagen_referencia,
+            }))
+          )
+        }
+      } catch (err) {
+        console.warn('Fallback a datos mock en laboratorio:', err)
+      }
+    }
+    loadRealData()
+  }, [])
+
   const handleAddCustomItem = (itemData: any) => {
     const newItem: CartItem = {
       id: `cart-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
@@ -72,8 +117,8 @@ export default function LaboratorioPage() {
       <Navbar cartCount={cart.reduce((a, b) => a + b.cantidad, 0)} onOpenCart={() => setIsCartOpen(true)} />
       <main className="flex-1 max-w-7xl mx-auto px-4 md:px-8 pt-12 pb-24 w-full">
         <CustomLabConfigurator
-          prendasStock={MOCK_PRENDAS_STOCK}
-          modificadores={MOCK_MODIFICADORES}
+          prendasStock={prendasStock}
+          modificadores={modificadores}
           onAddCustomItemToCart={handleAddCustomItem}
         />
       </main>

@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Navbar } from '@/components/ui/Navbar'
 import { Footer } from '@/components/ui/Footer'
 import { AcidRubberCatalog, BilleteraItem } from '@/components/shop/AcidRubberCatalog'
 import { CartDrawer, CartItem } from '@/components/shop/CartDrawer'
 import { QRCheckoutModal } from '@/components/checkout/QRCheckoutModal'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 const MOCK_BILLETERAS: BilleteraItem[] = [
   {
@@ -41,6 +42,34 @@ export default function BilleterasPage() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
+  const [billeteras, setBilleteras] = useState<BilleteraItem[]>(MOCK_BILLETERAS)
+
+  useEffect(() => {
+    async function loadRealData() {
+      try {
+        const supabase = createClient()
+        const { data } = await supabase.from('billeteras_caucho').select('*').eq('is_active', true)
+
+        if (data && data.length > 0) {
+          setBilleteras(
+            data.map((item: any) => ({
+              id: item.id,
+              nombre_diseno: item.nombre_diseno,
+              lote: item.lote,
+              precio_fijo: Number(item.precio_fijo),
+              stock_disponible: item.stock_disponible,
+              imagen_url: item.imagen_url,
+              galeria_urls: item.galeria_urls,
+            }))
+          )
+        }
+      } catch (err) {
+        console.warn('Fallback a datos mock en billeteras:', err)
+      }
+    }
+    loadRealData()
+  }, [])
+
   const handleAddBilletera = (billetera: BilleteraItem) => {
     const existingIndex = cart.findIndex((i) => i.billetera_id === billetera.id)
     if (existingIndex > -1) {
@@ -69,7 +98,7 @@ export default function BilleterasPage() {
     <div className="min-h-screen flex flex-col justify-between">
       <Navbar cartCount={cart.reduce((a, b) => a + b.cantidad, 0)} onOpenCart={() => setIsCartOpen(true)} />
       <main className="flex-1 max-w-7xl mx-auto px-4 md:px-8 pt-12 pb-24 w-full">
-        <AcidRubberCatalog billeteras={MOCK_BILLETERAS} onAddToCart={handleAddBilletera} />
+        <AcidRubberCatalog billeteras={billeteras} onAddToCart={handleAddBilletera} />
       </main>
       <Footer />
 

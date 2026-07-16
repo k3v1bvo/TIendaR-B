@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { Navbar } from '@/components/ui/Navbar'
 import { Footer } from '@/components/ui/Footer'
 import { CustomLabConfigurator, PrendaBaseItem, ModificadorItem } from '@/components/shop/CustomLabConfigurator'
@@ -90,6 +91,66 @@ const MOCK_BILLETERAS: BilleteraItem[] = [
 export default function HomePage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<'all' | 'lab' | 'rubber'>('all')
+
+  // Catálogos dinámicos desde Supabase con fallback local
+  const [prendasStock, setPrendasStock] = useState<PrendaBaseItem[]>(MOCK_PRENDAS_STOCK)
+  const [modificadores, setModificadores] = useState<ModificadorItem[]>(MOCK_MODIFICADORES)
+  const [billeteras, setBilleteras] = useState<BilleteraItem[]>(MOCK_BILLETERAS)
+
+  useEffect(() => {
+    async function loadRealData() {
+      try {
+        const supabase = createClient()
+        const [resRopa, resMods, resBilleteras] = await Promise.all([
+          supabase.from('productos_base').select('*').eq('is_active', true),
+          supabase.from('modificadores').select('*').eq('is_active', true),
+          supabase.from('billeteras_caucho').select('*').eq('is_active', true),
+        ])
+
+        if (resRopa.data && resRopa.data.length > 0) {
+          setPrendasStock(
+            resRopa.data.map((item: any) => ({
+              id: item.id,
+              nombre: item.nombre,
+              tipo: item.tipo,
+              talla: item.talla,
+              precio_base: Number(item.precio_base),
+              stock: item.stock,
+              imagen_url: item.imagen_url,
+              galeria_urls: item.galeria_urls,
+            }))
+          )
+        }
+        if (resMods.data && resMods.data.length > 0) {
+          setModificadores(
+            resMods.data.map((item: any) => ({
+              id: item.id,
+              nombre: item.nombre,
+              categoria: item.categoria,
+              precio_extra: Number(item.precio_extra),
+              imagen_referencia: item.imagen_referencia,
+            }))
+          )
+        }
+        if (resBilleteras.data && resBilleteras.data.length > 0) {
+          setBilleteras(
+            resBilleteras.data.map((item: any) => ({
+              id: item.id,
+              nombre_diseno: item.nombre_diseno,
+              lote: item.lote,
+              precio_fijo: Number(item.precio_fijo),
+              stock_disponible: item.stock_disponible,
+              imagen_url: item.imagen_url,
+              galeria_urls: item.galeria_urls,
+            }))
+          )
+        }
+      } catch (err) {
+        console.warn('Usando datos de demostración como fallback en HomePage:', err)
+      }
+    }
+    loadRealData()
+  }, [])
 
   // Estado global simple del carrito y modales
   const [cart, setCart] = useState<CartItem[]>([])
@@ -481,8 +542,8 @@ export default function HomePage() {
           {(activeTab === 'all' || activeTab === 'lab') && (
             <div className="pt-2">
               <CustomLabConfigurator
-                prendasStock={MOCK_PRENDAS_STOCK}
-                modificadores={MOCK_MODIFICADORES}
+                prendasStock={prendasStock}
+                modificadores={modificadores}
                 onAddCustomItemToCart={handleAddCustomItem}
               />
             </div>
@@ -495,7 +556,7 @@ export default function HomePage() {
           {(activeTab === 'all' || activeTab === 'rubber') && (
             <div className="pt-2">
               <AcidRubberCatalog
-                billeteras={MOCK_BILLETERAS}
+                billeteras={billeteras}
                 onAddToCart={handleAddBilletera}
               />
             </div>
