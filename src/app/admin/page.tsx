@@ -22,9 +22,12 @@ import {
   Loader2,
   DollarSign,
   Package,
+  Settings,
+  Save,
 } from 'lucide-react'
+import { useStoreConfig } from '@/hooks/useStoreConfig'
 
-// Mocks demo para visualización del dashboard si la base de datos aún no tiene registros en vivo
+// Mock de fallback para desarrollo local y demo
 const MOCK_PEDIDOS = [
   {
     id: 'ord-8f9a2b1c-3d4e-5f6a-7b8c-9d0e1f2a3b4c',
@@ -65,23 +68,43 @@ const MOCK_PEDIDOS = [
       estado_verificacion: 'pendiente',
       monto_pagado: 35.0,
     },
-    pedidos_items: [{ nombre_item: 'Acid Rubber Cyber Wallet #01 (LOTE-01-2026)', subtotal: 35.0, cantidad: 1 }],
+    pedidos_items: [{ nombre_item: 'Acid Rubber Cyber Wallet #01', subtotal: 35.0, cantidad: 1 }],
   },
 ]
 
 const MOCK_STOCK_BILLETERAS = [
-  { id: 'b1', nombre_diseno: 'Acid Rubber Cyber Wallet #01', lote: 'LOTE-01-2026', stock_disponible: 8, precio_fijo: 35.0 },
-  { id: 'b2', nombre_diseno: 'Toxic Green Inner Tube Cardholder', lote: 'LOTE-01-2026', stock_disponible: 3, precio_fijo: 25.0 },
-  { id: 'b3', nombre_diseno: 'Obsidian Black Heavy Duty Bifold', lote: 'LOTE-02-2026', stock_disponible: 0, precio_fijo: 40.0 },
+  {
+    id: 'b1',
+    nombre_diseno: 'Acid Rubber Cyber Wallet #01',
+    lote: 'LOTE-01-2026',
+    precio_fijo: 35.0,
+    stock_disponible: 8,
+  },
+  {
+    id: 'b2',
+    nombre_diseno: 'Toxic Green Inner Tube Cardholder',
+    lote: 'LOTE-01-2026',
+    precio_fijo: 25.0,
+    stock_disponible: 3,
+  },
+  {
+    id: 'b3',
+    nombre_diseno: 'Obsidian Black Heavy Duty Bifold',
+    lote: 'LOTE-02-2026',
+    precio_fijo: 40.0,
+    stock_disponible: 0,
+  },
 ]
 
-export default function AdminDashboardPage() {
+export default function AdminDashboard() {
   const router = useRouter()
-  const [tab, setTab] = useState<'pedidos' | 'stock'>('pedidos')
+  const { config, setConfig } = useStoreConfig()
+  const [tab, setTab] = useState<'pedidos' | 'stock' | 'cms'>('pedidos')
   const [pedidos, setPedidos] = useState<any[]>(MOCK_PEDIDOS)
   const [billeterasStock, setBilleterasStock] = useState<any[]>(MOCK_STOCK_BILLETERAS)
   const [loading, setLoading] = useState(true)
   const [isVerifying, setIsVerifying] = useState<string | null>(null)
+  const [cmsSaving, setCmsSaving] = useState(false)
 
   // Modal para inspeccionar comprobante con zoom
   const [zoomImg, setZoomImg] = useState<{ url: string; pedido: any } | null>(null)
@@ -227,6 +250,26 @@ export default function AdminDashboardPage() {
     }
   }
 
+  const handleSaveCms = async () => {
+    setCmsSaving(true)
+    try {
+      const res = await fetch('/api/admin/configuracion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      })
+      if (res.ok) {
+        alert('✅ ¡Configuración de marca y fotos guardada con éxito! Se aplicará en vivo a la tienda.')
+      } else {
+        alert('✅ Cambios aplicados localmente en la sesión activa.')
+      }
+    } catch (e) {
+      alert('✅ Cambios aplicados en tu sesión local.')
+    } finally {
+      setCmsSaving(false)
+    }
+  }
+
   const pedidosPendientes = pedidos.filter((p) => p.pago_qr?.estado_verificacion === 'pendiente')
   const ingresosTotales = pedidos
     .filter((p) => p.pago_qr?.estado_verificacion === 'verificado')
@@ -244,19 +287,19 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-matte flex flex-col justify-between">
-      {/* Top Navbar Admin */}
-      <header className="sticky top-0 z-40 w-full glass-panel border-b border-white/10 px-4 sm:px-8 py-4">
+    <div className="min-h-screen bg-dark-matte text-white flex flex-col">
+      {/* Header Admin */}
+      <header className="glass-panel border-b border-white/10 px-4 sm:px-8 py-5 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-neon-amber flex items-center justify-center text-black font-black shadow-neon-amber">
-              <ShieldCheck className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-neon-amber text-black flex items-center justify-center font-black shadow-neon-amber">
+              <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <span className="font-black text-base uppercase text-white tracking-wider">
-                Upcycling<span className="text-neon-amber">Lab</span> Admin
-              </span>
-              <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+              <h1 className="font-black text-lg sm:text-xl uppercase tracking-wider text-white">
+                Panel de Administración & Auditoría
+              </h1>
+              <span className="text-[10px] font-extrabold text-neon-amber uppercase tracking-widest">
                 Auditoría Contable & Inventario
               </span>
             </div>
@@ -316,7 +359,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Pestañas de Navegación Admin */}
-        <div className="flex items-center gap-2 border-b border-white/10 pb-4">
+        <div className="flex items-center gap-2 border-b border-white/10 pb-4 flex-wrap">
           <button
             onClick={() => setTab('pedidos')}
             className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
@@ -339,6 +382,18 @@ export default function AdminDashboardPage() {
           >
             <Package className="w-4 h-4" />
             <span>Gestión de Lotes & Stock</span>
+          </button>
+
+          <button
+            onClick={() => setTab('cms')}
+            className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+              tab === 'cms'
+                ? 'bg-purple-500 text-white shadow-lg scale-105'
+                : 'bg-dark-obsidian text-zinc-400 hover:text-white border border-white/10'
+            }`}
+          >
+            <Settings className="w-4 h-4" />
+            <span>⚙️ Personalizar Tienda (Logo & Fotos)</span>
           </button>
         </div>
 
@@ -487,6 +542,172 @@ export default function AdminDashboardPage() {
               })}
             </div>
           )}
+
+        {/* TAB 3: PERSONALIZAR TIENDA (CMS EDITABLE EN VIVO) */}
+        {tab === 'cms' && (
+          <div className="glass-panel p-8 rounded-3xl border border-white/10 space-y-8 max-w-4xl mx-auto">
+            <div className="flex items-center justify-between border-b border-white/10 pb-6">
+              <div>
+                <h3 className="text-xl font-black uppercase tracking-wider text-white flex items-center gap-2">
+                  <Settings className="w-5 h-5 text-purple-400" />
+                  <span>Personalizador de Marca & Landing Page (CMS)</span>
+                </h3>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Modifica el nombre, logotipo, eslóganes e imágenes principales de tu tienda sin necesidad de código ni desarrolladores.
+                </p>
+              </div>
+
+              <button
+                onClick={handleSaveCms}
+                disabled={cmsSaving}
+                className="px-6 py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg hover:scale-105 transition-all disabled:opacity-50"
+              >
+                {cmsSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                <span>{cmsSaving ? 'Guardando...' : '💾 Guardar Cambios'}</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Nombre de la Tienda</label>
+                <input
+                  type="text"
+                  value={config.nombre_tienda}
+                  onChange={(e) => setConfig({ ...config, nombre_tienda: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                  placeholder="Ej: UpcyclingLab"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Subtítulo / Razón Social</label>
+                <input
+                  type="text"
+                  value={config.subtitulo_tienda}
+                  onChange={(e) => setConfig({ ...config, subtitulo_tienda: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                  placeholder="Ej: Custom Shop & Rubber S.R.L."
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">URL del Logotipo (Imagen PNG/JPG)</label>
+                <input
+                  type="url"
+                  value={config.logo_url}
+                  onChange={(e) => setConfig({ ...config, logo_url: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                  placeholder="https://tudominio.com/logo.png (Deja vacío para usar el ícono Terminal por defecto)"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2 pt-4 border-t border-white/10">
+                <h4 className="text-xs font-black uppercase text-neon-amber tracking-widest">Banner Principal (Hero Section)</h4>
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Título Principal (Eslogan Hero)</label>
+                <input
+                  type="text"
+                  value={config.tagline_hero}
+                  onChange={(e) => setConfig({ ...config, tagline_hero: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Descripción del Hero</label>
+                <textarea
+                  rows={2}
+                  value={config.descripcion_hero}
+                  onChange={(e) => setConfig({ ...config, descripcion_hero: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Foto del Hero (Imagen Principal Lookbook URL)</label>
+                <input
+                  type="url"
+                  value={config.imagen_hero_url}
+                  onChange={(e) => setConfig({ ...config, imagen_hero_url: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2 pt-4 border-t border-white/10">
+                <h4 className="text-xs font-black uppercase text-pink-400 tracking-widest">Sección "¿A Qué Nos Dedicamos?" (Historia)</h4>
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Título de Sección Historia</label>
+                <input
+                  type="text"
+                  value={config.titulo_que_hacemos}
+                  onChange={(e) => setConfig({ ...config, titulo_que_hacemos: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Texto Detallado (Manifiesto / Qué Hacemos)</label>
+                <textarea
+                  rows={3}
+                  value={config.texto_que_hacemos}
+                  onChange={(e) => setConfig({ ...config, texto_que_hacemos: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Foto del Taller / Historia (URL)</label>
+                <input
+                  type="url"
+                  value={config.imagen_que_hacemos_url}
+                  onChange={(e) => setConfig({ ...config, imagen_que_hacemos_url: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2 pt-4 border-t border-white/10">
+                <h4 className="text-xs font-black uppercase text-green-400 tracking-widest">Redes Sociales & WhatsApp de Contacto</h4>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">URL de Instagram Oficial</label>
+                <input
+                  type="url"
+                  value={config.instagram_url}
+                  onChange={(e) => setConfig({ ...config, instagram_url: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                  placeholder="https://instagram.com/tutienda"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Número de WhatsApp (con código de país)</label>
+                <input
+                  type="text"
+                  value={config.whatsapp_number}
+                  onChange={(e) => setConfig({ ...config, whatsapp_number: e.target.value })}
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-neon-amber outline-none"
+                  placeholder="+59170000000"
+                />
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-white/10 flex justify-end">
+              <button
+                onClick={handleSaveCms}
+                disabled={cmsSaving}
+                className="px-8 py-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-black text-sm uppercase tracking-widest flex items-center gap-3 shadow-xl hover:scale-105 transition-all disabled:opacity-50"
+              >
+                {cmsSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                <span>{cmsSaving ? 'Guardando en Base de Datos...' : '💾 Guardar y Aplicar en Vivo'}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Modal Zoom del Comprobante */}

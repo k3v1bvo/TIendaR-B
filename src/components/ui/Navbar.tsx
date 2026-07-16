@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ShoppingBag, Sparkles, ShieldCheck, Layers, Terminal } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
+import { useStoreConfig } from '@/hooks/useStoreConfig'
 
 interface NavbarProps {
   cartCount: number
@@ -13,6 +14,7 @@ interface NavbarProps {
 
 export function Navbar({ cartCount, onOpenCart }: NavbarProps) {
   const pathname = usePathname()
+  const { config } = useStoreConfig()
 
   const links = [
     { name: 'Laboratorio', href: '/laboratorio', icon: Sparkles, badge: 'Upcycling' },
@@ -23,17 +25,25 @@ export function Navbar({ cartCount, onOpenCart }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full glass-panel border-b border-white/10 px-4 md:px-8 py-4 transition-all duration-300">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo dinámico */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-amber via-orange-500 to-neon-purple flex items-center justify-center shadow-neon-amber group-hover:scale-105 transition-transform">
-            <Terminal className="w-6 h-6 text-black font-black" />
-          </div>
+          {config.logo_url ? (
+            <img
+              src={config.logo_url}
+              alt={config.nombre_tienda}
+              className="w-10 h-10 rounded-xl object-cover border border-white/20 shadow-neon-amber group-hover:scale-105 transition-transform"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-amber via-orange-500 to-neon-purple flex items-center justify-center shadow-neon-amber group-hover:scale-105 transition-transform">
+              <Terminal className="w-6 h-6 text-black font-black" />
+            </div>
+          )}
           <div>
             <span className="font-black text-lg md:text-xl tracking-wider uppercase text-white group-hover:text-neon-amber transition-colors">
-              Upcycling<span className="text-neon-amber">Lab</span>
+              {config.nombre_tienda}
             </span>
             <span className="block text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] -mt-1">
-              Custom Shop & Rubber
+              {config.subtitulo_tienda}
             </span>
           </div>
         </Link>

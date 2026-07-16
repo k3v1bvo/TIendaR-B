@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react'
 import Link from 'next/link'
 import { Terminal, Shield, Recycle, Sparkles, Heart, MessageCircle, Share2, MapPin, ExternalLink } from 'lucide-react'
+import { useStoreConfig } from '@/hooks/useStoreConfig'
 
 function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
@@ -13,21 +16,31 @@ function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
 }
 
 export function Footer() {
+  const { config } = useStoreConfig()
+
   return (
     <footer className="w-full bg-zinc-900 dark:bg-dark-obsidian border-t border-zinc-800 dark:border-white/10 pt-16 pb-12 px-4 md:px-12 mt-28 text-white">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 pb-14 border-b border-zinc-800 dark:border-white/10">
         {/* Columna 1: Marca y Manifiesto */}
         <div className="md:col-span-1 space-y-4">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-neon-amber flex items-center justify-center text-black font-black group-hover:scale-105 transition-transform shadow-neon-amber">
-              <Terminal className="w-5 h-5" />
-            </div>
+            {config.logo_url ? (
+              <img
+                src={config.logo_url}
+                alt={config.nombre_tienda}
+                className="w-9 h-9 rounded-xl object-cover border border-white/20 group-hover:scale-105 transition-transform shadow-neon-amber"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-xl bg-neon-amber flex items-center justify-center text-black font-black group-hover:scale-105 transition-transform shadow-neon-amber">
+                <Terminal className="w-5 h-5" />
+              </div>
+            )}
             <div>
               <span className="font-black text-lg tracking-wider uppercase text-white group-hover:text-neon-amber transition-colors">
-                Upcycling<span className="text-neon-amber">Lab</span>
+                {config.nombre_tienda}
               </span>
               <span className="block text-[9px] font-extrabold text-zinc-400 uppercase tracking-[0.2em]">
-                Custom Shop & Studio
+                {config.subtitulo_tienda}
               </span>
             </div>
           </Link>
@@ -49,25 +62,29 @@ export function Footer() {
           <ul className="space-y-3 text-xs font-medium text-zinc-300">
             <li>
               <a
-                href="#comunidad"
+                href={config.instagram_url || '#comunidad'}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-neon-amber transition-colors flex items-center gap-2 group"
               >
                 <div className="w-6 h-6 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition-colors">
                   <InstagramIcon className="w-3.5 h-3.5" />
                 </div>
-                <span>Instagram (Próximamente)</span>
+                <span>Instagram Oficial</span>
                 <ExternalLink className="w-3 h-3 text-zinc-500 group-hover:text-white ml-auto" />
               </a>
             </li>
             <li>
               <a
-                href="#comunidad"
+                href={`https://wa.me/${config.whatsapp_number?.replace(/[^0-9]/g, '') || '59170000000'}?text=Hola,%20quisiera%20consultar%20sobre%20sus%20diseños%20upcycling`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-neon-amber transition-colors flex items-center gap-2 group"
               >
                 <div className="w-6 h-6 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
                   <MessageCircle className="w-3.5 h-3.5" />
                 </div>
-                <span>Pedir Collab / DM Directo</span>
+                <span>Pedir Collab / WhatsApp Directo</span>
                 <ExternalLink className="w-3 h-3 text-zinc-500 group-hover:text-white ml-auto" />
               </a>
             </li>

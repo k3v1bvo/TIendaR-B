@@ -3,6 +3,7 @@ import { getAdminSupabaseClient } from '@/lib/supabase/admin'
 import { sendEmail } from '@/lib/mail/nodemailer'
 import { getPedidoRecibidoTemplate } from '@/lib/mail/templates'
 import { CartItem } from '@/components/shop/CartDrawer'
+import { env } from '@/lib/env'
 
 export async function POST(req: Request) {
   try {
@@ -120,7 +121,29 @@ export async function POST(req: Request) {
       to: correo,
       subject: `⚡ Pedido Recibido y en Revisión - Orden #${String(pedidoId).slice(0, 8)}`,
       html: htmlTemplate,
-    }).catch((e) => console.error('Error asíncrono enviando mail de confirmación:', e))
+    }).catch((e) => console.error('Error asíncrono enviando mail de confirmación al cliente:', e))
+
+    // Alerta simultánea para el Administrador del Laboratorio (como en Barbersite)
+    sendEmail({
+      to: env.SMTP_USER,
+      subject: `🔔 [NUEVO PEDIDO QR EN REVISIÓN] - $${Number(total).toFixed(2)} USD - Orden #${String(pedidoId).slice(0, 8)}`,
+      html: `
+        <div style="background:#0A0A0C;color:#FFF;padding:25px;font-family:sans-serif;border:1px solid #2A2A32;border-radius:12px;">
+          <h2 style="color:#F59E0B;margin-top:0;">⚡ ¡NUEVA ORDEN RECIBIDA EN EL LABORATORIO!</h2>
+          <p>El cliente <strong>${cliente_nombre}</strong> (${correo} | Tel: ${telefono || 'N/A'}) acaba de realizar un pedido con transferencia QR.</p>
+          <div style="background:#1A1A1E;padding:15px;border-radius:8px;margin:15px 0;">
+            <p style="margin:0 0 10px 0;color:#A1A1AA;font-size:12px;">RESUMEN DE ÍTEMS:</p>
+            <p style="margin:0;line-height:1.5;">${resumenTexto}</p>
+            <hr style="border:none;border-top:1px solid #2A2A32;margin:12px 0;"/>
+            <p style="margin:0;font-size:18px;color:#10B981;font-weight:bold;">Total: $${Number(total).toFixed(2)} USD</p>
+          </div>
+          <p style="color:#D4D4D8;">El comprobante ha sido subido a Supabase Storage y está esperando tu auditoría en el panel de administración:</p>
+          <div style="text-align:center;margin-top:20px;">
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/admin" style="background:#F59E0B;color:#000;font-weight:bold;padding:12px 24px;text-decoration:none;border-radius:8px;display:inline-block;">Verificar Pago en Panel Admin →</a>
+          </div>
+        </div>
+      `,
+    }).catch((e) => console.error('Error asíncrono enviando alerta al admin:', e))
 
     return NextResponse.json({
       success: true,

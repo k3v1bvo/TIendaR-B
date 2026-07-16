@@ -10,6 +10,7 @@ import { CustomLabConfigurator, PrendaBaseItem, ModificadorItem } from '@/compon
 import { AcidRubberCatalog, BilleteraItem } from '@/components/shop/AcidRubberCatalog'
 import { CartDrawer, CartItem } from '@/components/shop/CartDrawer'
 import { QRCheckoutModal } from '@/components/checkout/QRCheckoutModal'
+import { useStoreConfig } from '@/hooks/useStoreConfig'
 import { Sparkles, ShieldCheck, ArrowRight, Zap, Recycle, Shield, Heart, Eye, Star, CheckCircle2, MessageCircle, ExternalLink, Scissors, Layers, MapPin } from 'lucide-react'
 
 function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -32,6 +33,7 @@ const MOCK_PRENDAS_STOCK: PrendaBaseItem[] = [
     precio_base: 65.0,
     stock: 1,
     imagen_url: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=80',
+    galeria_urls: ['https://images.unsplash.com/photo-1551537482-f2075a1d41f2?auto=format&fit=crop&w=800&q=80'],
   },
   {
     id: 'p2',
@@ -41,6 +43,7 @@ const MOCK_PRENDAS_STOCK: PrendaBaseItem[] = [
     precio_base: 48.0,
     stock: 1,
     imagen_url: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=800&q=80',
+    galeria_urls: [],
   },
   {
     id: 'p3',
@@ -50,6 +53,7 @@ const MOCK_PRENDAS_STOCK: PrendaBaseItem[] = [
     precio_base: 55.0,
     stock: 2,
     imagen_url: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80',
+    galeria_urls: [],
   },
 ]
 
@@ -69,6 +73,7 @@ const MOCK_BILLETERAS: BilleteraItem[] = [
     precio_fijo: 35.0,
     stock_disponible: 8,
     imagen_url: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80',
+    galeria_urls: ['https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80'],
   },
   {
     id: 'b2',
@@ -77,6 +82,7 @@ const MOCK_BILLETERAS: BilleteraItem[] = [
     precio_fijo: 25.0,
     stock_disponible: 3,
     imagen_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+    galeria_urls: [],
   },
   {
     id: 'b3',
@@ -90,6 +96,7 @@ const MOCK_BILLETERAS: BilleteraItem[] = [
 
 export default function HomePage() {
   const router = useRouter()
+  const { config } = useStoreConfig()
   const [activeTab, setActiveTab] = useState<'all' | 'lab' | 'rubber'>('all')
 
   // Catálogos dinámicos desde Supabase con fallback local
@@ -235,15 +242,12 @@ export default function HomePage() {
                 <span>Colección '26 • Upcycling & Custom Studio</span>
               </div>
 
-              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] text-zinc-900 dark:text-white">
-                REPURPOSED <br />
-                <span className="font-serif italic font-light text-transparent bg-clip-text bg-gradient-to-r from-zinc-900 via-zinc-600 to-black dark:from-neon-amber dark:via-orange-400 dark:to-neon-purple">
-                  ART & FASHION.
-                </span>
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.95] text-zinc-900 dark:text-white">
+                {config.tagline_hero || 'REPURPOSED ART & FASHION'}
               </h1>
 
               <p className="text-zinc-600 dark:text-zinc-400 text-base md:text-xl font-normal leading-relaxed max-w-xl">
-                Collages llenos de sentimientos e intervención de piezas únicas en Bolivia 📍🇧🇴. Transformamos mezclilla vintage de los 90s y fabricamos accesorios de resistencia eterna en <strong className="text-zinc-900 dark:text-white underline decoration-neon-amber decoration-2">caucho 100% reciclado</strong> de cámaras de bicicleta.
+                {config.descripcion_hero || 'Collages llenos de sentimientos e intervención de piezas únicas en Bolivia 📍🇧🇴. Transformamos mezclilla vintage y caucho 100% reciclado.'}
               </p>
 
               {/* Botones de acción editorial */}
@@ -288,7 +292,7 @@ export default function HomePage() {
             <div className="lg:col-span-5 relative flex justify-center items-center">
               <div className="relative w-full max-w-md aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-zinc-800 bg-zinc-100 dark:bg-black group">
                 <img
-                  src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1000&q=80"
+                  src={config.imagen_hero_url || 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1000&q=80'}
                   alt="Upcycled Fashion Lookbook"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
@@ -338,31 +342,22 @@ export default function HomePage() {
               </div>
 
               <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-zinc-900 dark:text-white leading-tight">
-                Collages Llenos de <br />
-                <span className="font-serif italic font-light text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-pink-500 dark:from-neon-amber dark:to-neon-pink">
-                  Sentimientos.
-                </span>
+                {config.titulo_que_hacemos || 'Collages Llenos de Sentimientos.'}
               </h2>
 
               <div className="space-y-4 text-zinc-600 dark:text-zinc-300 text-sm md:text-base leading-relaxed font-normal">
-                <p>
-                  En <strong>Upcycling Lab & Custom Shop</strong> creemos que la ropa y los objetos que llevamos a diario deben tener un alma, una historia y una rebeldía propia. No somos una fábrica de moda rápida ni producimos plástico nuevo.
-                </p>
-                <p>
-                  Rescatamos chamarras de mezclilla de los años 90 y 2000 que el mundo olvidó, y recolectamos cámaras de neumático de bicicleta destinadas a contaminar los basureros. Las limpiamos con procesos orgánicos, las restauramos y las intervenimos manualmente.
-                </p>
-                <p className="border-l-4 border-zinc-900 dark:border-neon-amber pl-4 italic font-medium text-zinc-900 dark:text-white">
-                  "Cada parche cosido, cada trazo de pintura neón reactiva al UV y cada textura de caucho es un collage emocional irrepetible. Confeccionamos piezas para toda la vida desde nuestro taller en Bolivia 📍🇧🇴."
-                </p>
+                <p>{config.texto_que_hacemos || 'En Upcycling Lab & Custom Shop transformamos excedentes e intervenimos piezas únicas en Bolivia. Cada diseño es irrepetible y hecho a mano.'}</p>
               </div>
 
               <div className="pt-2 flex items-center gap-6">
                 <a
-                  href="#comunidad"
+                  href={config.instagram_url || '#comunidad'}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white font-black text-xs uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
                 >
                   <InstagramIcon className="w-4 h-4" />
-                  <span>Seguir nuestras Redes Sociales (Pronto)</span>
+                  <span>Seguir en Instagram Oficial</span>
                 </a>
               </div>
             </div>
@@ -370,7 +365,7 @@ export default function HomePage() {
             <div className="lg:col-span-6 grid grid-cols-2 gap-4">
               <div className="space-y-4">
                 <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-md border border-black/10 dark:border-white/10">
-                  <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80" alt="Taller Upcycling 1" className="w-full h-full object-cover" />
+                  <img src={config.imagen_que_hacemos_url || "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80"} alt="Taller Upcycling 1" className="w-full h-full object-cover" />
                 </div>
                 <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-black/50 border border-black/5 text-center">
                   <span className="block text-xs font-black uppercase text-zinc-900 dark:text-white">Mezclilla Vintage</span>

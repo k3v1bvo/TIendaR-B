@@ -327,3 +327,39 @@ VALUES
   ('Toxic Green Inner Tube Cardholder', 'LOTE-01-2026', 25.00, 3, 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80', ARRAY[]::text[]),
   ('Obsidian Black Heavy Duty Bifold', 'LOTE-02-2026', 40.00, 0, 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80', ARRAY[]::text[])
 ON CONFLICT DO NOTHING;
+
+-- ------------------------------------------------------------------------------
+-- 10. TABLA configuracion_sitio (CMS Editable: Nombre, Logo, Hero, Qué Hacemos)
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.configuracion_sitio (
+  id TEXT PRIMARY KEY DEFAULT 'config_principal',
+  nombre_tienda TEXT NOT NULL DEFAULT 'UpcyclingLab',
+  subtitulo_tienda TEXT NOT NULL DEFAULT 'Custom Shop & Rubber S.R.L.',
+  logo_url TEXT DEFAULT '',
+  tagline_hero TEXT NOT NULL DEFAULT 'REBELDÍA SOSTENIBLE & DISEÑO ÚNICO',
+  descripcion_hero TEXT NOT NULL DEFAULT 'Transformamos prendas vintage en desuso y cámaras de caucho industrial en piezas únicas de alta costura urbana. Cada diseño es irrepetible y hecho a mano.',
+  imagen_hero_url TEXT NOT NULL DEFAULT 'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?auto=format&fit=crop&w=1600&q=80',
+  titulo_que_hacemos TEXT NOT NULL DEFAULT '¿A QUÉ NOS DEDICAMOS?',
+  texto_que_hacemos TEXT NOT NULL DEFAULT 'Somos un laboratorio creativo y taller de confección upcycling. Tomamos chaquetas de mezclilla, pantalones cargo y caucho recuperado de vehículos para rediseñar prendas con tachas, pintura acrílica neón, bordados artesanales y parches exclusivos. No hacemos moda rápida: creamos arte para vestir.',
+  imagen_que_hacemos_url TEXT NOT NULL DEFAULT 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1000&q=80',
+  instagram_url TEXT DEFAULT 'https://instagram.com',
+  tiktok_url TEXT DEFAULT 'https://tiktok.com',
+  whatsapp_number TEXT DEFAULT '+59170000000',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.configuracion_sitio ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Lectura pública para configuracion_sitio"
+  ON public.configuracion_sitio FOR SELECT
+  USING (true);
+
+CREATE POLICY "Edición exclusiva para administradores en configuracion_sitio"
+  ON public.configuracion_sitio FOR ALL
+  USING (EXISTS (
+    SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'
+  ));
+
+INSERT INTO public.configuracion_sitio (id) VALUES ('config_principal')
+ON CONFLICT (id) DO NOTHING;
+
